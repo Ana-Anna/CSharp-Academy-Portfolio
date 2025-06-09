@@ -14,6 +14,24 @@ Inspired by the [C# Academy project](https://www.thecsharpacademy.com/project/53
 
 Each part has a defined responsability, designed to be easy to fllow, easy to extend.
 
+# 🖼 Screenshots
+
+## Operator Menu
+![Main Menu](https://github.com/Ana-Anna/CSharp-Academy-Portfolio/blob/main/01_MathGame/Assets/main-menu.png))
+
+---
+
+## Sample Game
+![Sample Game](https://github.com/Ana-Anna/CSharp-Academy-Portfolio/blob/main/01_MathGame/Assets/addition-game.png)
+
+
+# 🧭 Architecture Overview
+
+This diagram shows how the program is structured:
+
+![UML Diagram](https://github.com/Ana-Anna/CSharp-Academy-Portfolio/blob/main/01_MathGame/Assets/mathgame_UML.png))
+
+
 # ▶️ How to Run
 
 To run this project, you’ll need the [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) installed locally.
