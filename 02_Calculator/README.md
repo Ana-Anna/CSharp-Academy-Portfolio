@@ -14,19 +14,19 @@ Inspired by the [C# Academy Calculator Project](https://www.thecsharpacademy.com
 # 🖼 Screenshots
 
 ## Operator Menu
-![Main Menu](screenshots/main-menu.png)
+![Main Menu]([https://github.com/Ana-Anna/CSharp-Academy-Portfolio/blob/main/02_Calculator/Assets/main-menu.png))
 
 ---
 
 ## Sample Operation
-![Sample Operation](screenshots/sample-operation.png)
+![Sample Operation](https://github.com/Ana-Anna/CSharp-Academy-Portfolio/blob/main/02_Calculator/Assets/sample-operation.png)
 
 
 # 🧭 Architecture Overview
 
 This diagram shows how the program is structured:
 
-![UML Diagram](screenshots/calculator-uml.png)
+![UML Diagram]([screenshots/calculator-uml.png](https://github.com/Ana-Anna/CSharp-Academy-Portfolio/blob/main/02_Calculator/Assets/calculator-uml.png))
 
 
 
