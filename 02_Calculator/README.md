@@ -11,6 +11,24 @@ Inspired by the [C# Academy Calculator Project](https://www.thecsharpacademy.com
 - Static helper methods
 - Separation of logic and UI
 
+# 🖼 Screenshots
+
+## Operator Menu
+![Main Menu](screenshots/main-menu.png)
+
+---
+
+## Sample Operation
+![Sample Operation](screenshots/sample-operation.png)
+
+
+# 🧭 Architecture Overview
+
+This diagram shows how the program is structured:
+
+![UML Diagram](screenshots/calculator-uml.png)
+
+
 
 # ▶️ How to Run
 
