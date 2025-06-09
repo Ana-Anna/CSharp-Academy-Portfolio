@@ -1,6 +1,6 @@
 # 🧮 Console Calculator
 
-A simple console based calculator that supports basic aithmetic operations.
+A simple console based calculator that supports basic arithmetic operations.
 
 Inspired by the [C# Academy Calculator Project](https://www.thecsharpacademy.com/project/11/calculator).
 
