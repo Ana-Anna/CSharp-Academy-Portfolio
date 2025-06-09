@@ -1,10 +1,8 @@
 # 🎮 Math Game
 
-# 📌 About the Project
+A console based math quiz game that helps users practice aithmetic through 5 question rounds.
 
-This is a console based math game designed to help users practice basic aithmetic through short, friendly sessions.
-
-The player selects a difficulty level and is given 5 questions per round, with feedback and scoring provided at the end.
+Inspired by the [C# Academy project](https://www.thecsharpacademy.com/project/53/math-game).
 
 # 🧠 Key practiced 
 
