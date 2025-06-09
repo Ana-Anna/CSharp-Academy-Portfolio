@@ -4,7 +4,7 @@ A console based math quiz game that helps users practice aithmetic through 5 que
 
 Inspired by the [C# Academy project](https://www.thecsharpacademy.com/project/53/math-game).
 
-# 🧠 Key practiced 
+# 🧠 Key concepts
 
 - Abstract classes and inheritance
 - Enums, switch-case logic
