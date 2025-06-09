@@ -21,5 +21,5 @@ Welcome to my personal portfolio for the C# Academy Roadmap [The C# Academy](htt
 
 I aim to keep every project clean, self-contained and easy to follow.
 
-
+Each line of code is a quiet step forward.
 
