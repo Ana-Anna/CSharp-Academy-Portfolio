@@ -16,21 +16,20 @@ Inspired by the [C# Academy Habit Logger Project]([https://www.thecsharpacademy.
 # 🖼 Screenshots
 
 ## Main Menu
-![Main Menu]())
+![Main Menu](https://github.com/Ana-Anna/CSharp-Academy-Portfolio/blob/main/03_HabitLogger/Assets/main_menu%20.png))
 
----
 
 ## Habit Report
-![Habit Report]()
+![Habit Report](https://github.com/Ana-Anna/CSharp-Academy-Portfolio/blob/main/03_HabitLogger/Assets/habit_report.png)
 
 ## Logging an entry
-![Logging an entry]()
+![Logging an entry](https://github.com/Ana-Anna/CSharp-Academy-Portfolio/blob/main/03_HabitLogger/Assets/logging_entry.png)
 
 # 🧭 Architecture Overview
 
 This diagram shows how the program is structured:
 
-![UML Diagram]())
+![UML Diagram](https://github.com/Ana-Anna/CSharp-Academy-Portfolio/blob/main/03_HabitLogger/Assets/habbitLogger-UML.png)
 
 
 
