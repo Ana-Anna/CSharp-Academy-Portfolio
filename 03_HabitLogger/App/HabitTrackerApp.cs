@@ -4,73 +4,69 @@ using System.Linq;
 using System.Net.WebSockets;
 using System.Text;
 using System.Threading.Tasks;
+using HabitLoggerApp.Helpers;
+using HabitLoggerApp.Models;
 using HabitLoggerApp.Services;
 using HabitLoggerApp.Utils;
+using Spectre.Console;
 
 namespace HabitLoggerApp.App
 {
     public class HabitTrackerApp(HabitService habitService, HabitEntryService habitEntryService, ReportService reportService)
     {
         private readonly HabitService _habitService = habitService;
-        private readonly HabitEntryService _habitEntryService=habitEntryService;
+        private readonly HabitEntryService _habitEntryService = habitEntryService;
         private readonly ReportService _reportService = reportService;
-
 
         public void Run()
         {
-
             ShowSeedResult();
 
             while (true)
             {
-                Console.Clear();
-                Console.WriteLine("Habit Tracker App");
-                Console.WriteLine("------------------");
-                Console.WriteLine("1. Add Habit");
-                Console.WriteLine("2. View Habits");
-                Console.WriteLine("3. Delete Habit");
-                Console.WriteLine("4. Log Habit Entry");
-                Console.WriteLine("5. View Habit Entries");
-                Console.WriteLine("6. View Habit Report (yearly)");
-                Console.WriteLine("7. Exit");
-                Console.Write("Choose an option: ");
-                string? choice = Console.ReadLine();
-                if (string.IsNullOrWhiteSpace(choice))
-                {
-                    Console.WriteLine("Invalid choice, try again.");
-                    Console.WriteLine("\nPress any key to continue...");
-                    Console.ReadKey();
-                    continue;
-                }
+                var choice = AnsiConsole.Prompt(
+                    new SelectionPrompt<string>()
+                        .Title("[green]What do you want to do?[/]")
+                        .PageSize(10)
+                        .AddChoices([
+                            "Add Habit", "View Habits", "Delete Habit",
+                            "Log Habit Entry", "View Habit Entries",
+                            "Edit Habit Entries", "Delete Habit Entries",
+                            "View Habit Report", "Exit"
+                        ])
+                );
 
                 switch (choice)
                 {
-                    case "1":
+                    case "Add Habit":
                         HandleAddHabit();
                         break;
-                    case "2":
+                    case "View Habits":
                         HandleViewHabits();
                         break;
-                    case "3":
+                    case "Delete Habit":
                         HandleDeleteHabit();
                         break;
-                    case "4": 
+                    case "Log Habit Entry":
                         HandleLogHabitEntry();
                         break;
-                    case "5":
+                    case "View Habit Entries":
                         HandleViewHabitEntries();
                         break;
-                    case "6":
+                    case "Edit Habit Entries":
+                        HandleEditHabitEntries();
+                        break;
+                    case "Delete Habit Entries":
+                        HandleDeleteHabitEntries();
+                        break;
+                    case "View Habit Report":
                         HandleViewHabitReport();
                         break;
-                    case "7":
+                    case "Exit":
                         return;
-                    default:
-                        Console.WriteLine("Invalid choice, try again.");
-                        break;
                 }
 
-                Console.WriteLine("\nPress any key to continue...");
+                AnsiConsole.MarkupLine("[grey]\nPress any key to continue...[/]");
                 Console.ReadKey();
             }
         }
@@ -81,66 +77,61 @@ namespace HabitLoggerApp.App
 
             if (habits.Count == 0)
             {
-                Console.WriteLine("No habits found.");
+                AnsiConsole.MarkupLine("[red]No habits found.[/]");
                 return;
             }
 
-            Console.WriteLine("Your Habits:");
+            AnsiConsole.MarkupLine("[green]Your Habits:[/]");
             foreach (var habit in habits)
             {
-                Console.WriteLine($"• ID: {habit.Id} | {habit.Name} ({habit.UnitOfMeasure})");
+                AnsiConsole.MarkupLine($"• [yellow]ID: {habit.Id}[/] | {habit.Name} ({habit.UnitOfMeasure})");
             }
         }
 
         private void HandleAddHabit()
         {
-            string name = Helpers.GetNonEmptyInput("Enter habit name");
-            string unit = Helpers.GetNonEmptyInput("Enter unit of measure");
+            string name = AnsiConsole.Ask<string>("Enter habit name:");
+            string unit = AnsiConsole.Ask<string>("Enter unit of measure:");
 
             var (_, message) = _habitService.AddHabit(name, unit);
-            Console.WriteLine(message);
+            AnsiConsole.MarkupLine($"[blue]{message}[/]");
         }
 
         private void ShowSeedResult()
         {
             bool seeded = _habitService.SeedInitialData();
 
-            if (seeded)
-                Console.WriteLine("Database seeded with test data.");
-            else
-                Console.WriteLine("Seed skipped: database already contains habits.");
+            AnsiConsole.MarkupLine(seeded
+                ? "[green]Database seeded with test data.[/]"
+                : "[grey]Seed skipped: database already contains habits.[/]");
 
-            Console.WriteLine("\nPress any key to continue...");
+            AnsiConsole.MarkupLine("[grey]\nPress any key to continue...[/]");
             Console.ReadKey();
         }
 
         private void HandleDeleteHabit()
         {
-            Console.Write("Enter the ID of the habit to delete: ");
-            string? input = Console.ReadLine();
-
-            if (string.IsNullOrWhiteSpace(input) || !int.TryParse(input, out int habitId) || habitId <= 0)
+            var habits = _habitService.GetAllHabits();
+            if (habits.Count == 0)
             {
-                Console.WriteLine("Invalid ID. Please try again.");
+                AnsiConsole.MarkupLine("[red]No habits found.[/]");
                 return;
             }
 
-            Console.Write($"Are you sure you want to delete habit {habitId}? (y/n): ");
-            string? confirm = Console.ReadLine();
-            if (confirm?.ToLower() != "y")
-            {
-                Console.WriteLine("Deletion canceled.");
-                return;
-            }
+            var selectedHabit = AnsiConsole.Prompt(
+                new SelectionPrompt<Habit>()
+                    .Title("Select a habit to delete")
+                    .UseConverter(h => $"ID: {h.Id} | {h.Name} ({h.UnitOfMeasure})")
+                    .AddChoices(habits)
+            );
 
-            bool deleted = _habitService.DeleteHabit(habitId);
-            if (!deleted)
-            {
-                Console.WriteLine($"No habit found with ID {habitId}.");
+            if (!AnsiConsole.Confirm($"Are you sure you want to delete habit '{selectedHabit.Name}'?"))
                 return;
-            }
 
-            Console.WriteLine($"Habit with ID {habitId} deleted successfully.");
+            bool deleted = _habitService.DeleteHabit(selectedHabit.Id);
+            AnsiConsole.MarkupLine(deleted
+                ? $"[green]Habit '{selectedHabit.Name}' deleted successfully.[/]"
+                : $"[red]Failed to delete habit '{selectedHabit.Name}'.[/]");
         }
 
         private void HandleLogHabitEntry()
@@ -148,54 +139,32 @@ namespace HabitLoggerApp.App
             var habits = _habitService.GetAllHabits();
             if (habits.Count == 0)
             {
-                Console.WriteLine("No habits available. Add a habit first.");
+                AnsiConsole.MarkupLine("[red]No habits available. Add a habit first.[/]");
                 return;
             }
 
-            Console.WriteLine("Available Habits:");
-            foreach (var habit in habits)
-            {
-                Console.WriteLine($"• ID: {habit.Id} | {habit.Name} ({habit.UnitOfMeasure})");
-            }
+            var selectedHabit = AnsiConsole.Prompt(
+                new SelectionPrompt<Habit>()
+                    .Title("Select a habit to log entry for")
+                    .UseConverter(h => $"ID: {h.Id} | {h.Name} ({h.UnitOfMeasure})")
+                    .AddChoices(habits)
+            );
 
-            Console.Write("Enter the ID of the habit to log: ");
-            string? idInput = Console.ReadLine();
-            if (!int.TryParse(idInput, out int habitId))
-            {
-                Console.WriteLine("Invalid habit ID.");
-                return;
-            }
+            int quantity = AnsiConsole.Prompt(
+                new TextPrompt<int>("Enter quantity:")
+                    .Validate(q => q > 0 ? ValidationResult.Success() : ValidationResult.Error("Quantity must be greater than 0."))
+            );
 
-            Console.Write("Enter quantity: ");
-            string? quantityInput = Console.ReadLine();
-            if (!int.TryParse(quantityInput, out int quantity) || quantity <= 0)
-            {
-                Console.WriteLine("Invalid quantity.");
-                return;
-            }
+            DateTime date = AnsiConsole.Prompt(
+                new TextPrompt<DateTime>("Enter date (yyyy-MM-dd):")
+                    .DefaultValue(DateTime.Today)
+                    .Validate(d => d <= DateTime.Today ? ValidationResult.Success() : ValidationResult.Error("Date cannot be in the future."))
+            );
 
-            Console.Write("Enter date (yyyy-MM-dd) or press Enter for today: ");
-            string? dateInput = Console.ReadLine();
-
-            DateTime date;
-            if (string.IsNullOrWhiteSpace(dateInput) || string.Equals(dateInput, "today", StringComparison.OrdinalIgnoreCase))
-            {
-                date = DateTime.Today;
-            }
-            else if (!DateTime.TryParse(dateInput, out date))
-            {
-                Console.WriteLine("Invalid date format.");
-                return;
-            }
-
-            if (_habitEntryService.LogEntry(habitId, quantity, date))
-            {
-                Console.WriteLine("Entry logged successfully.");
-            }
+            if (_habitEntryService.LogEntry(selectedHabit.Id, quantity, date))
+                AnsiConsole.MarkupLine("[green]Entry logged successfully.[/]");
             else
-            {
-                Console.WriteLine("Failed to log entry. Make sure the habit ID exists.");
-            }
+                AnsiConsole.MarkupLine("[red]Failed to log entry. Make sure the habit exists.[/]");
         }
 
         private void HandleViewHabitEntries()
@@ -240,46 +209,130 @@ namespace HabitLoggerApp.App
             var habits = _habitService.GetAllHabits();
             if (habits.Count == 0)
             {
-                Console.WriteLine("No habits available.");
+                AnsiConsole.MarkupLine("[red]No habits available.[/]");
                 return;
             }
 
-            Console.WriteLine("Available Habits:");
-            foreach (var habit in habits)
-            {
-                Console.WriteLine($"• ID: {habit.Id} | {habit.Name} ({habit.UnitOfMeasure})");
-            }
+            var selectedHabit = AnsiConsole.Prompt(
+                new SelectionPrompt<Habit>()
+                    .Title("Select a habit to view report")
+                    .UseConverter(h => $"ID: {h.Id} | {h.Name} ({h.UnitOfMeasure})")
+                    .AddChoices(habits)
+            );
 
-            Console.Write("Enter the ID of the habit: ");
-            string? habitIdInput = Console.ReadLine();
-            if (!int.TryParse(habitIdInput, out int habitId))
-            {
-                Console.WriteLine("Invalid ID.");
-                return;
-            }
+            int year = AnsiConsole.Prompt(
+                new TextPrompt<int>("Enter the year to view report (e.g., 2024):")
+                    .Validate(y => y > 1900 && y <= DateTime.Now.Year
+                        ? ValidationResult.Success()
+                        : ValidationResult.Error("Please enter a valid year."))
+            );
 
-            Console.Write("Enter the year to view report (e.g., 2024): ");
-            string? yearInput = Console.ReadLine();
-            if (!int.TryParse(yearInput, out int year))
-            {
-                Console.WriteLine("Invalid year.");
-                return;
-            }
-
-            var report = _reportService.GenerateHabitReport(habitId, year);
+            var report = _reportService.GenerateHabitReport(selectedHabit.Id, year);
             if (report == null)
             {
-                Console.WriteLine("Habit not found or no data.");
+                AnsiConsole.MarkupLine("[red]Habit not found or no data.[/]");
                 return;
             }
 
-            Console.WriteLine($"\n Report for '{report.HabitName}' in {report.Year}");
-            Console.WriteLine($"- Entries Logged: {report.EntryCount}");
-            Console.WriteLine($"- Total Quantity: {report.TotalQuantity}");
-            Console.WriteLine($"- Average per Entry: {report.AverageQuantityPerEntry:F2}");
+            AnsiConsole.MarkupLine($"\n[bold]Report for '{report.HabitName}' in {report.Year}[/]");
+            AnsiConsole.MarkupLine($"- Entries Logged: [yellow]{report.EntryCount}[/]");
+            AnsiConsole.MarkupLine($"- Total Quantity: [yellow]{report.TotalQuantity}[/]");
+            AnsiConsole.MarkupLine($"- Average per Entry: [yellow]{report.AverageQuantityPerEntry:F2}[/]");
         }
 
 
+        private void HandleDeleteHabitEntries()
+        {
+            var habits = _habitService.GetAllHabits();
+            if (habits.Count == 0)
+            {
+                AnsiConsole.MarkupLine("[red]No habits found.[/]");
+                return;
+            }
+
+            var selectedHabit = AnsiConsole.Prompt(
+                new SelectionPrompt<Habit>()
+                    .Title("Select a habit to delete entries from")
+                    .UseConverter(h => $"ID: {h.Id} | {h.Name} ({h.UnitOfMeasure})")
+                    .AddChoices(habits)
+            );
+
+            var entries = _habitEntryService.GetEntriesForHabit(selectedHabit.Id);
+            if (entries.Count == 0)
+            {
+                AnsiConsole.MarkupLine("[grey]No entries found.[/]");
+                return;
+            }
+
+            var selectedEntry = AnsiConsole.Prompt(
+                new SelectionPrompt<HabitEntry>()
+                    .Title("Select an entry to delete")
+                    .UseConverter(e => $"{e.Date:yyyy-MM-dd} — {e.Quantity}")
+                    .AddChoices(entries)
+            );
+
+            if (!AnsiConsole.Confirm("Are you sure you want to delete this entry?"))
+                return;
+
+            bool success = _habitEntryService.DeleteEntry(selectedEntry.Id);
+            AnsiConsole.MarkupLine(success
+                ? "[green]Entry deleted successfully.[/]"
+                : "[red]Failed to delete entry.[/]");
+        }
+
+
+        private void HandleEditHabitEntries()
+        {
+            var habits = _habitService.GetAllHabits();
+            if (habits.Count == 0)
+            {
+                AnsiConsole.MarkupLine("[red]No habits found.[/]");
+                return;
+            }
+
+            var selectedHabit = AnsiConsole.Prompt(
+                new SelectionPrompt<Habit>()
+                    .Title("Select a habit to edit entries for")
+                    .UseConverter(h => $"ID: {h.Id} | {h.Name} ({h.UnitOfMeasure})")
+                    .AddChoices(habits)
+            );
+
+            var entries = _habitEntryService.GetEntriesForHabit(selectedHabit.Id);
+            if (entries.Count == 0)
+            {
+                AnsiConsole.MarkupLine("[grey]No entries to edit.[/]");
+                return;
+            }
+
+            var selectedEntry = AnsiConsole.Prompt(
+                new SelectionPrompt<HabitEntry>()
+                    .Title("Select an entry to edit")
+                    .UseConverter(e => $"{e.Date:yyyy-MM-dd} — {e.Quantity}")
+                    .AddChoices(entries)
+            );
+
+            int newQuantity = AnsiConsole.Prompt(
+                new TextPrompt<int>($"Enter new quantity (current: {selectedEntry.Quantity}):")
+                    .AllowEmpty()
+                    .DefaultValue(selectedEntry.Quantity)
+                    .Validate(q => q > 0 ? ValidationResult.Success() : ValidationResult.Error("Quantity must be greater than 0."))
+            );
+
+            DateTime newDate = AnsiConsole.Prompt(
+                new TextPrompt<DateTime>($"Enter new date (current: {selectedEntry.Date:yyyy-MM-dd}) or leave blank:")
+                    .AllowEmpty()
+                    .DefaultValue(selectedEntry.Date)
+                    .Validate(d => d <= DateTime.Today ? ValidationResult.Success() : ValidationResult.Error("Date cannot be in the future."))
+            );
+
+            selectedEntry.Quantity = newQuantity;
+            selectedEntry.Date = newDate;
+
+            bool success = _habitEntryService.UpdateEntry(selectedEntry);
+            AnsiConsole.MarkupLine(success
+                ? "[green]Entry updated successfully.[/]"
+                : "[red]Failed to update entry.[/]");
+        }
     }
 }
 

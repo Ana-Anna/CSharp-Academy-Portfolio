@@ -46,6 +46,32 @@ namespace HabitLoggerApp.Services
         {
             return _dbManager.GetEntriesByHabit(habitId);
         }
+
+        public bool DeleteEntry(int entryId)
+        {
+            try
+            {
+                _dbManager.DeleteHabitEntry(entryId);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public bool UpdateEntry(HabitEntry entry)
+        {
+            try
+            {
+                _dbManager.UpdateHabitEntry(entry);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
     }
 

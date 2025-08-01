@@ -179,5 +179,29 @@ namespace HabitLoggerApp.Data
             }
             return entries;
         }
+
+        public void DeleteHabitEntry(int entryId)
+        {
+            using var connection = new SQLiteConnection(_connectionString);
+            connection.Open();
+
+            string deleteQuery = "DELETE FROM HabitEntries WHERE Id = @Id";
+            using var command = new SQLiteCommand(deleteQuery, connection);
+            command.Parameters.AddWithValue("@Id", entryId);
+            command.ExecuteNonQuery();
         }
+        public void UpdateHabitEntry(HabitEntry entry)
+        {
+            using var connection = new SQLiteConnection(_connectionString);
+            connection.Open();
+
+            string updateQuery = "UPDATE HabitEntries SET Quantity = @Quantity, Date = @Date WHERE Id = @Id";
+            using var command = new SQLiteCommand(updateQuery, connection);
+            command.Parameters.AddWithValue("@Quantity", entry.Quantity);
+            command.Parameters.AddWithValue("@Date", entry.Date.ToString("yyyy-MM-dd"));
+            command.Parameters.AddWithValue("@Id", entry.Id);
+
+            command.ExecuteNonQuery();
+        }
+    }
 }
