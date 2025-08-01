@@ -6,11 +6,23 @@ Inspired by the [C# Academy Habit Logger Project]([https://www.thecsharpacademy.
 
 # 🧠 Key concepts
 
-- Modular structure following **clean architecture** and **composition laws**
-- Separation of concerns: UI (`App`), logic (`Services`), data (`Data`)
-- Input validation using helper methods
-- ADO.NET database interactions with **parameterized queries** (no Entity Framework)
-- Auto-seeded database
+-Clean, modular architecture built with composition principles and single-responsibility design
+
+-Separation of concerns:
+
+App/ – user interface flow and command handling
+
+Services/ – business logic for habits, entries, and reports
+
+Data/ – data access layer using ADO.NET
+
+Helpers/ – input formatting and validation logic
+
+-SQLite database with secure parameterized queries via ADO.NET (no Entity Framework)
+
+-Auto-seeded database: generates initial habit data only if the database is empty
+
+-Support for habit editing, deleting, viewing reports, and logging multiple entries
 
 
 # 🖼 Screenshots
