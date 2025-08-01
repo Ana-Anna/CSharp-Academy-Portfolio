@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using HabitLoggerApp.Helpers;
 using HabitLoggerApp.Models;
 using HabitLoggerApp.Services;
-using HabitLoggerApp.Utils;
 using Spectre.Console;
 
 namespace HabitLoggerApp.App
@@ -107,6 +106,7 @@ namespace HabitLoggerApp.App
 
             AnsiConsole.MarkupLine("[grey]\nPress any key to continue...[/]");
             Console.ReadKey();
+            Console.Clear();
         }
 
         private void HandleDeleteHabit()

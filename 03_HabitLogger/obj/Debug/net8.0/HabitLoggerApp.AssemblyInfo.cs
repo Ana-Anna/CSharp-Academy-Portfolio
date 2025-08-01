@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("HabitLoggerApp")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cbd63582da9615de81da083777af1783c5be280e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6c8484a0d8855f8708bf1eb2519cf3c19c413618")]
 [assembly: System.Reflection.AssemblyProductAttribute("HabitLoggerApp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("HabitLoggerApp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
