@@ -7,6 +7,7 @@ Welcome to my personal portfolio for the C# Academy Roadmap [The C# Academy](htt
 |-----------|--------------|----------------------------------|------------|
 | 01        | Math Game    | Input, loops, switch-case        | Custom menu, scoring |
 | 02        | Calculator   | Modular design, file structure   | Math library, multi-project setup |
+| 03        | Habit Logger  | Clean architecture, persistence, service design    | SQLite storage, layered structure |
 
 
 # 💡About This Repository
