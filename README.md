@@ -1,4 +1,4 @@
-# 🌸 CSharp Academy Portfolio
+# CSharp Academy Portfolio
 
 Welcome to my personal portfolio for the C# Academy Roadmap [The C# Academy](https://www.thecsharpacademy.com/).
 
